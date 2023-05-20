@@ -5,13 +5,13 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerSendRequest extends TeleportEvent implements Cancellable {
+public class PlayerSendRequestEvent extends TeleportEvent implements Cancellable {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
     private final Player sender,target;
     private boolean cancelled = false;
 
-    public PlayerSendRequest(Player sender, Player target) {
+    public PlayerSendRequestEvent(Player sender, Player target) {
         this.sender = sender;
         this.target = target;
     }
