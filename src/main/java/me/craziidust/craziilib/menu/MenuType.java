@@ -1,5 +1,6 @@
 package me.craziidust.craziilib.menu;
 
+import com.google.common.annotations.Beta;
 import net.kyori.adventure.text.Component;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -48,6 +49,13 @@ public enum MenuType {
         @Override
         public @NotNull Inventory create(Menu holder, Component title) {
             return createInventory(holder, InventoryType.HOPPER,title);
+        }
+    },
+    @Beta
+    DISPENSER {
+        @Override
+        public @NotNull Inventory create(Menu holder, Component title) {
+            return createInventory(holder,InventoryType.DISPENSER,title);
         }
     };
 
