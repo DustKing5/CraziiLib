@@ -1,19 +1,22 @@
-package me.craziidust.teleport.events;
+package me.craziidust.craziilib.teleport.events;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerSendRequestEvent extends TeleportEvent implements Cancellable {
+public class PlayerTeleportToLocationEvent extends TeleportEvent implements Cancellable {
 
     private static final HandlerList HANDLER_LIST = new HandlerList();
-    private final Player sender,target;
+
+    private final Player sender;
+    private final Location location;
     private boolean cancelled = false;
 
-    public PlayerSendRequestEvent(Player sender, Player target) {
+    public PlayerTeleportToLocationEvent(Player sender, Location location) {
         this.sender = sender;
-        this.target = target;
+        this.location = location;
     }
 
     @Override
@@ -21,8 +24,8 @@ public class PlayerSendRequestEvent extends TeleportEvent implements Cancellable
         return sender;
     }
 
-    public Player getTarget() {
-        return target;
+    public Location getLocation() {
+        return location;
     }
 
     @Override

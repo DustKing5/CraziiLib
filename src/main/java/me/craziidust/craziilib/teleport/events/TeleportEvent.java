@@ -1,4 +1,4 @@
-package me.craziidust.teleport.events;
+package me.craziidust.craziilib.teleport.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

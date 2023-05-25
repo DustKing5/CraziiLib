@@ -1,4 +1,4 @@
-package me.craziidust.teleport;
+package me.craziidust.craziilib.teleport;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
