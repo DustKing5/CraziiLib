@@ -1,6 +1,6 @@
 package me.craziidust.craziilib.menu;
 
-public interface ManuHolder {
+public interface MenuHolder {
 
     Menu getMenu();
 }
