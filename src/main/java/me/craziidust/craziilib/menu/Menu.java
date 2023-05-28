@@ -76,10 +76,14 @@ public class Menu implements Listener,Runnable, InventoryHolder {
         player.openInventory(inventory);
     }
 
-    protected final void close() {
+    public final void close() {
         HandlerList.unregisterAll(this);
         renderer.cancel();
         inventory.close();
+    }
+
+    public final void clearButtons(){
+        buttonMap.clear();
     }
 
     @EventHandler
@@ -101,10 +105,6 @@ public class Menu implements Listener,Runnable, InventoryHolder {
                 }
             }
         }
-    }
-
-    public final void clearButtons(){
-        buttonMap.clear();
     }
 
     @EventHandler

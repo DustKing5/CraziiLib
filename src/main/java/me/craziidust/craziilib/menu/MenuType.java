@@ -51,7 +51,6 @@ public enum MenuType {
             return createInventory(holder, InventoryType.HOPPER,title);
         }
     },
-    @Beta
     DISPENSER {
         @Override
         public @NotNull Inventory create(Menu holder, Component title) {
