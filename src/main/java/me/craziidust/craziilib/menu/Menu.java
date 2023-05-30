@@ -23,14 +23,11 @@ public class Menu implements Listener,Runnable, InventoryHolder {
     private final JavaPlugin javaPlugin;
     private final Inventory inventory;
     private final Map<Integer, Button> buttonMap;
-    private final BukkitTask renderer;
+    private BukkitTask renderer;
     public Menu(JavaPlugin javaPlugin,MenuType menuType, Component title) {
         this.javaPlugin = javaPlugin;
         this.inventory = menuType.create(this,title);
         this.buttonMap = new HashMap<>();
-        this.renderer = Bukkit.getScheduler().runTaskTimer(javaPlugin,this,0,5);
-
-        Bukkit.getPluginManager().registerEvents(this, javaPlugin);
     }
 
     public final void addButton(int slot,Button button) {
@@ -73,6 +70,9 @@ public class Menu implements Listener,Runnable, InventoryHolder {
     }
 
     public final void open(Player player) {
+        renderer = Bukkit.getScheduler().runTaskTimer(javaPlugin,this,0,5);
+        Bukkit.getPluginManager().registerEvents(this, javaPlugin);
+
         player.openInventory(inventory);
     }
 
