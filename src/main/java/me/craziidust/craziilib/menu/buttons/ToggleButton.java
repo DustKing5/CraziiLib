@@ -9,15 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public class ToggleButton implements Button {
 
     private boolean toggled = false;
+
+    private final Predicate<ClickContext> canUse;
     private final ItemStack on;
     private final ItemStack off;
     private final Consumer<Boolean> onToggle;
 
     protected ToggleButton(Builder builder) {
+        this.canUse = builder.canUse;
         this.on = builder.on;
         this.off = builder.off;
         this.onToggle = builder.onToggle;
@@ -41,6 +45,11 @@ public class ToggleButton implements Button {
     }
 
     @Override
+    public boolean canUse(ClickContext context) {
+        return canUse.test(context);
+    }
+
+    @Override
     public void leftClick(ClickContext context) {
         onToggle.accept(toggled);
         toggle();
@@ -48,6 +57,7 @@ public class ToggleButton implements Button {
 
     public static class Builder {
 
+        private Predicate<ClickContext> canUse = clickContext -> true;
         private final ItemStack on;
         private final ItemStack off;
         protected Consumer<Boolean> onToggle = aBoolean -> {};
@@ -55,6 +65,11 @@ public class ToggleButton implements Button {
         public Builder(Material on, Material off) {
             this.on = new ItemStack(on);
             this.off = new ItemStack(off);
+        }
+
+        public Builder canUse(Predicate<ClickContext> canUse) {
+            this.canUse = canUse;
+            return this;
         }
 
         public Builder setOnName(Component component) {

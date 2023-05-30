@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 public class DropButton implements Button {
 
     private final Material material;
+    private final Predicate<ClickContext> canUse;
     private final Consumer<ItemMeta> metaConsumer;
     private final Predicate<ItemStack> isValid;
     private final Consumer<ItemStack> onDrop;
@@ -21,6 +22,7 @@ public class DropButton implements Button {
     private DropButton(Builder builder) {
         this.material = builder.material;
         this.metaConsumer = builder.metaConsumer;
+        this.canUse = builder.canUse;
         this.isValid = builder.isValid;
         this.onDrop = builder.onDrop;
     }
@@ -34,6 +36,11 @@ public class DropButton implements Button {
             return itemStack;
         }
 
+    }
+
+    @Override
+    public boolean canUse(ClickContext context) {
+        return canUse.test(context);
     }
 
     @Override
@@ -55,6 +62,7 @@ public class DropButton implements Button {
 
         private final Material material;
         private Consumer<ItemMeta> metaConsumer = itemMeta -> {};
+        private Predicate<ClickContext> canUse = clickContext -> true;
         private Predicate<ItemStack> isValid = is -> false;
         private Consumer<ItemStack> onDrop = is -> {};
 
@@ -84,6 +92,11 @@ public class DropButton implements Button {
 
         public Builder addMeta(Consumer<ItemMeta> consumer) {
             metaConsumer = metaConsumer.andThen(consumer);
+            return this;
+        }
+
+        public Builder canUse(Predicate<ClickContext> canUse) {
+            this.canUse = canUse;
             return this;
         }
 

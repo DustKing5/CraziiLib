@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class SimpleButton implements Button {
 
     private final Consumer<ClickContext> onRightClick;
     private final Consumer<ClickContext> onLeftClick;
+    private final Predicate<ClickContext> canUse;
     private final Consumer<ItemMeta> metaConsumer;
     private Material material;
     private int amount;
@@ -23,6 +25,7 @@ public class SimpleButton implements Button {
     protected SimpleButton(Builder builder) {
         this.onRightClick = builder.onRightClick;
         this.onLeftClick = builder.onLeftClick;
+        this.canUse = builder.canUse;
         this.material = builder.material;
         this.amount = builder.amount;
         this.metaConsumer = builder.metaConsumer;
@@ -33,6 +36,11 @@ public class SimpleButton implements Button {
         ItemStack itemStack = new ItemStack(material,amount);
         itemStack.editMeta(ItemMeta.class, metaConsumer);
         return itemStack;
+    }
+
+    @Override
+    public boolean canUse(ClickContext context) {
+        return canUse.test(context);
     }
 
     @Override
@@ -69,6 +77,7 @@ public class SimpleButton implements Button {
         private int amount = 1;
         private Consumer<ClickContext> onRightClick = clickContext -> {};
         private Consumer<ClickContext> onLeftClick = clickContext -> {};
+        private Predicate<ClickContext> canUse = clickContext -> true;
         private Consumer<ItemMeta> metaConsumer = itemMeta -> {};
         public Builder(Material material) {
             this.material = material;
@@ -86,6 +95,11 @@ public class SimpleButton implements Button {
 
         public Builder onLeftClick(Consumer<ClickContext> consumer) {
             this.onLeftClick = consumer;
+            return this;
+        }
+
+        public Builder canUser(Predicate<ClickContext> canUse) {
+            this.canUse = canUse;
             return this;
         }
 

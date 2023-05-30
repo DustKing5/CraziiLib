@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -98,10 +99,16 @@ public class Menu implements Listener,Runnable, InventoryHolder {
         if (event.getClickedInventory() == inventory) {
             event.setCancelled(true);
             if (buttonMap.containsKey(event.getSlot())) {
+                ClickContext context = new ClickContext(event);
                 Button button = buttonMap.get(event.getSlot());
+
+                if (!button.canUse(context)) {
+                    return;
+                }
+
                 switch (event.getClick()) {
-                    case RIGHT -> button.rightClick(new ClickContext(event));
-                    case LEFT -> button.leftClick(new ClickContext(event));
+                    case RIGHT -> button.rightClick(context);
+                    case LEFT -> button.leftClick(context);
                 }
             }
         }
