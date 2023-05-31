@@ -98,7 +98,7 @@ public class SimpleButton implements Button {
             return this;
         }
 
-        public Builder canUser(Predicate<ClickContext> canUse) {
+        public Builder canUse(Predicate<ClickContext> canUse) {
             this.canUse = canUse;
             return this;
         }
