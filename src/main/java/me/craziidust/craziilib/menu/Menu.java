@@ -22,6 +22,8 @@ public class Menu implements Listener, InventoryHolder {
     private final JavaPlugin javaPlugin;
     private final Inventory inventory;
     private final Map<Integer, Button> buttonMap;
+
+    private Menu parent;
     public Menu(JavaPlugin javaPlugin,MenuType menuType, Component title) {
         this.javaPlugin = javaPlugin;
         this.inventory = menuType.create(this,title);
@@ -78,9 +80,23 @@ public class Menu implements Listener, InventoryHolder {
         inventory.close();
     }
 
-    public final void clearButtons(){
-        buttonMap.clear();
+    public final void populate() {
+        buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
     }
+
+    public final void openChild(Menu menu) {
+        menu.setParent(this);
+        inventory.getViewers().forEach(humanEntity -> menu.open((Player) humanEntity));
+    }
+
+    public final void openParent() {
+        inventory.getViewers().forEach(humanEntity -> parent.open((Player) humanEntity));
+        close();
+    }
+
+    public void onClick(ClickContext context) {
+
+    };
 
     @EventHandler
     public final void onInventoryClose(InventoryCloseEvent event) {
@@ -93,8 +109,8 @@ public class Menu implements Listener, InventoryHolder {
     public final void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == inventory) {
             event.setCancelled(true);
+            ClickContext context = new ClickContext(event);
             if (buttonMap.containsKey(event.getSlot())) {
-                ClickContext context = new ClickContext(event);
                 Button button = buttonMap.get(event.getSlot());
 
                 if (!button.canUse(context)) {
@@ -107,7 +123,9 @@ public class Menu implements Listener, InventoryHolder {
                 }
 
                 inventory.setItem(event.getSlot(), button.render());
+                return;
             }
+            onClick(context);
         }
     }
 
@@ -118,12 +136,16 @@ public class Menu implements Listener, InventoryHolder {
         }
     }
 
-    public final void populate() {
-        buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
+    @Override
+    public final @NotNull Inventory getInventory() {
+        return inventory;
     }
 
-    @Override
-    public @NotNull Inventory getInventory() {
-        return inventory;
+    public Menu getParent() {
+        return parent;
+    }
+
+    public void setParent(Menu parent) {
+        this.parent = parent;
     }
 }
