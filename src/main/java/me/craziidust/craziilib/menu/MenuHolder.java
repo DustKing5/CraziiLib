@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface MenuHolder {
 
-    interface SingeMenuHolder {
+    interface SingleMenuHolder {
 
         Menu getMenu();
 
@@ -24,6 +24,15 @@ public interface MenuHolder {
         }
         default void open(Player player, String id) {
             getMenu(id).open(player);
+        }
+    }
+
+    interface PerPlayerMenuHolder {
+
+        Menu getMenu(Player player);
+
+        default void open(Player player) {
+            getMenu(player).open(player);
         }
     }
 }
