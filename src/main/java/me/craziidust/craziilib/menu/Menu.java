@@ -13,18 +13,15 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Menu implements Listener,Runnable, InventoryHolder {
+public class Menu implements Listener, InventoryHolder {
     private final JavaPlugin javaPlugin;
     private final Inventory inventory;
     private final Map<Integer, Button> buttonMap;
-    private BukkitTask renderer;
     public Menu(JavaPlugin javaPlugin,MenuType menuType, Component title) {
         this.javaPlugin = javaPlugin;
         this.inventory = menuType.create(this,title);
@@ -71,15 +68,13 @@ public class Menu implements Listener,Runnable, InventoryHolder {
     }
 
     public final void open(Player player) {
-        renderer = Bukkit.getScheduler().runTaskTimer(javaPlugin,this,0,5);
         Bukkit.getPluginManager().registerEvents(this, javaPlugin);
-
+        populate();
         player.openInventory(inventory);
     }
 
     public final void close() {
         HandlerList.unregisterAll(this);
-        renderer.cancel();
         inventory.close();
     }
 
@@ -110,6 +105,8 @@ public class Menu implements Listener,Runnable, InventoryHolder {
                     case RIGHT -> button.rightClick(context);
                     case LEFT -> button.leftClick(context);
                 }
+
+                inventory.setItem(event.getSlot(), button.render());
             }
         }
     }
@@ -121,8 +118,7 @@ public class Menu implements Listener,Runnable, InventoryHolder {
         }
     }
 
-    @Override
-    public final void run() {
+    public final void populate() {
         buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
     }
 

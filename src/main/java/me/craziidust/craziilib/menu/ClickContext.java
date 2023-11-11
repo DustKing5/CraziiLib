@@ -7,6 +7,6 @@ import org.bukkit.inventory.ItemStack;
 
 public record ClickContext(Player player, boolean shift, InventoryAction inventoryAction, ItemStack current, ItemStack cursor) {
     public ClickContext(InventoryClickEvent event) {
-        this((Player) event.getWhoClicked(), event.isShiftClick(), event.getAction(),event.getCurrentItem(),event.getCursor());
+        this((Player) event.getWhoClicked(), event.isShiftClick(), event.getAction(), event.getCurrentItem(), event.getCursor());
     }
 }
