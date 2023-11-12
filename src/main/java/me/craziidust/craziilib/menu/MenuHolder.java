@@ -2,9 +2,6 @@ package me.craziidust.craziilib.menu;
 
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-
-import java.util.Map;
 
 public interface MenuHolder {
 
@@ -16,5 +13,13 @@ public interface MenuHolder {
 
     default Menu getMenu(String id) {
         return getMenu(null, id);
+    }
+
+    default void openMenu(Player player) {
+        getMenu(player).open(player);
+    }
+
+    default void openMenu(Player player, String id) {
+        getMenu(id).open(player);
     }
 }
