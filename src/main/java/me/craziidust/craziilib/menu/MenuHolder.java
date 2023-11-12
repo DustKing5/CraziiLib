@@ -7,6 +7,8 @@ public interface MenuHolder {
 
     Menu getMenu(@Nullable Player player, @Nullable String id);
 
+    void closeMenu();
+
     default Menu getMenu(Player player) {
         return getMenu(player, null);
     }
