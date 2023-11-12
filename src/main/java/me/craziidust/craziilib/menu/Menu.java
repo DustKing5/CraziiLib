@@ -23,13 +23,26 @@ public class Menu implements Listener, InventoryHolder {
     private final Inventory inventory;
     private final Map<Integer, Button> buttonMap;
 
+    private boolean active = false;
     private Menu parent;
+
+    /**
+     * Create new Menu instance
+     * @param javaPlugin
+     * @param menuType
+     * @param title
+     */
     public Menu(JavaPlugin javaPlugin,MenuType menuType, Component title) {
         this.javaPlugin = javaPlugin;
         this.inventory = menuType.create(this,title);
         this.buttonMap = new HashMap<>();
     }
 
+    /**
+     * Add button to specified slot
+     * @param slot
+     * @param button
+     */
     public final void addButton(int slot,Button button) {
         if (slot < 0) {
             throw new IllegalArgumentException("Slot can't be lower than 0");
@@ -39,6 +52,13 @@ public class Menu implements Listener, InventoryHolder {
         }
         buttonMap.put(slot,button);
     }
+
+    /**
+     * Add button to specified column and row
+     * @param row
+     * @param column
+     * @param button
+     */
     public final void addButton(int row, int column, Button button) {
         if (column < 0 || column > 8) {
             throw new IllegalArgumentException("Column out of bonds: 0-8");
@@ -49,6 +69,10 @@ public class Menu implements Listener, InventoryHolder {
         addButton((row*9)+column, button);
     }
 
+    /**
+     * Remove Button from specified slot
+     * @param slot
+     */
     public final void removeButton(int slot) {
         if (slot < 0) {
             throw new IllegalArgumentException("Slot can't be lower than 0");
@@ -59,6 +83,11 @@ public class Menu implements Listener, InventoryHolder {
         buttonMap.remove(slot);
     }
 
+    /**
+     * Remove Button from specified row and column
+     * @param row
+     * @param column
+     */
     public final void removeButton(int row, int column) {
         if (column < 0 || column > 8) {
             throw new IllegalArgumentException("Column out of bonds: 0-8");
@@ -69,29 +98,58 @@ public class Menu implements Listener, InventoryHolder {
         removeButton((row*9)+column);
     }
 
+    /**
+     * Open the Menu to specified player
+     * @param player
+     */
     public final void open(Player player) {
-        Bukkit.getPluginManager().registerEvents(this, javaPlugin);
-        populate();
+        if (!active) {
+            Bukkit.getPluginManager().registerEvents(this, javaPlugin);
+            populate();
+            active = true;
+        }
         player.openInventory(inventory);
     }
 
+    /**
+     * Close the menu for every viewer
+     */
     public final void close() {
+        active = false;
         HandlerList.unregisterAll(this);
         inventory.close();
     }
 
-    public final void populate() {
+    /**
+     * Close the menu for specified player
+     * @param player
+     */
+    public final void close(Player player) {
+        if (inventory.getViewers().isEmpty()) {
+            close();
+        }
+        if (player.getOpenInventory().getTopInventory() == inventory) {
+            player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+        }
+    }
+    private void populate() {
         buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
     }
 
-    public final void openChild(Menu menu) {
+    /**
+     * Open subMenu
+     * @param menu
+     */
+    public final void openChild(Player player, Menu menu) {
         menu.setParent(this);
-        inventory.getViewers().forEach(humanEntity -> menu.open((Player) humanEntity));
+        menu.open(player);
     }
 
-    public final void openParent() {
-        inventory.getViewers().forEach(humanEntity -> parent.open((Player) humanEntity));
-        close();
+    public final void openParent(Player player) {
+        if (parent == null) {
+            return;
+        }
+        parent.open(player);
     }
 
     public void onClick(ClickContext context) {
@@ -101,7 +159,7 @@ public class Menu implements Listener, InventoryHolder {
     @EventHandler
     public final void onInventoryClose(InventoryCloseEvent event) {
         if (event.getView().getTopInventory() == inventory) {
-            close();
+            close((Player) event.getPlayer());
         }
     }
 
