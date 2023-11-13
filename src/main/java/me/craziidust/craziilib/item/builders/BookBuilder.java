@@ -40,7 +40,7 @@ public class BookBuilder implements MetaBuilder<BookMeta> {
     }
 
     public BookBuilder addPages(Component ...components) {
-        return addPages(Arrays.stream(components).toList());
+        return addPages(List.of(components));
     }
 
     public BookBuilder addPages(List<Component> components) {
