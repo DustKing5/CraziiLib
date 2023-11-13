@@ -1,14 +1,12 @@
 package me.craziidust.craziilib.menu.buttons;
 
-import me.craziidust.craziilib.menu.ClickContext;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public interface Button {
-    ItemStack render();
+    @NotNull ItemStack render();
 
-    boolean canUse(ClickContext context);
+    @NotNull String getId();
 
-    default void rightClick(ClickContext context) {}
-
-    default void leftClick(ClickContext context) {}
+    default void onClick(){}
 }

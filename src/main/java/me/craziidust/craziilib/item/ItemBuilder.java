@@ -1,57 +1,81 @@
 package me.craziidust.craziilib.item;
 
-import org.apache.commons.lang3.Validate;
+import me.craziidust.craziilib.item.builders.MetaBuilder;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.Range;
 
-import java.util.function.Consumer;
+import java.util.List;
 
 public class ItemBuilder {
 
-    private final Material material;
-    private int amount = 1;
+    private final ItemStack itemStack;
 
-    /**
-     * New ItemBuilder
-     * @param material
-     */
     public ItemBuilder(Material material) {
-        this.material = material;
+        this.itemStack = new ItemStack(material);
     }
 
-    /**
-     * new ItemBuilder with specified amount
-     * @param material
-     * @param amount
-     */
-    public ItemBuilder(Material material, int amount) {
-        this.material = material;
-        Validate.inclusiveBetween(1,64, amount, "The amount not between 0 and 64");
-        this.amount = amount;
+    public ItemBuilder(Material material, @Range(to = 0, from = 64) int amount) {
+        this.itemStack = new ItemStack(material, amount);
     }
 
-    /**
-     * Build ItemStack with specified ItemMeta
-     * @param metaClass
-     * @param consumer Meta editor
-     * @return the new ItemStack
-     * @param <T> Type of ItemMeta
-     */
-    public<T extends ItemMeta> ItemStack build(Class<? extends T> metaClass, Consumer<T> consumer) {
-        ItemStack itemStack = new ItemStack(material, amount);
-        itemStack.editMeta(metaClass, consumer);
-        return itemStack;
+    public ItemBuilder addAttributeModifier(Attribute attribute, AttributeModifier modifier) {
+        itemStack.editMeta(itemMeta -> itemMeta.addAttributeModifier(attribute, modifier));
+        return this;
     }
 
-    /**
-     * Build ItemStack
-     * @param consumer
-     * @return the new ItemStack
-     */
-    public ItemStack build(Consumer<ItemMeta> consumer) {
-        ItemStack itemStack = new ItemStack(material, amount);
-        itemStack.editMeta(consumer);
+    public ItemBuilder addEnchant(Enchantment enchantment, int level) {
+        itemStack.editMeta(itemMeta -> itemMeta.addEnchant(enchantment, level, true));
+        return this;
+    }
+
+    public ItemBuilder addFlags(ItemFlag ...flags) {
+        itemStack.editMeta(itemMeta -> itemMeta.addItemFlags(flags));
+        return this;
+    }
+
+    public ItemBuilder customModel(int data) {
+        itemStack.editMeta(itemMeta -> itemMeta.setCustomModelData(data));
+        return this;
+    }
+
+    public ItemBuilder unBreakable(boolean bool) {
+        itemStack.editMeta(itemMeta -> itemMeta.setUnbreakable(bool));
+        return this;
+    }
+
+    public ItemBuilder display(TextComponent textComponent) {
+        itemStack.editMeta(itemMeta -> itemMeta.displayName(textComponent));
+        return this;
+    }
+
+    public ItemBuilder lore(TextComponent ...lines) {
+        itemStack.editMeta(itemMeta -> itemMeta.lore(List.of(lines)));
+        return this;
+    }
+
+    public ItemBuilder lore(List<TextComponent> lore) {
+        itemStack.editMeta(itemMeta -> itemMeta.lore(lore));
+        return this;
+    }
+
+    public ItemBuilder cloneMeta(ItemStack src) {
+        itemStack.setItemMeta(src.getItemMeta().clone());
+        return this;
+    }
+
+    public <T extends ItemMeta> ItemBuilder editMeta(MetaBuilder<T> builder) {
+        itemStack.editMeta(builder.getType(), builder);
+        return this;
+    }
+
+    public ItemStack build(){
         return itemStack;
     }
 }

@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -132,7 +133,7 @@ public class Menu implements Listener, InventoryHolder {
             player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
         }
     }
-    private void populate() {
+    private final void populate() {
         buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
     }
 
@@ -152,9 +153,13 @@ public class Menu implements Listener, InventoryHolder {
         parent.open(player);
     }
 
-    public void onClick(ClickContext context) {
-
+    public boolean onButtonClick(Player player, Button button, ClickType clickType) {
+        return false;
     };
+
+    public boolean hasAccess(int slot) {
+        return false;
+    }
 
     @EventHandler
     public final void onInventoryClose(InventoryCloseEvent event) {
@@ -166,24 +171,15 @@ public class Menu implements Listener, InventoryHolder {
     @EventHandler
     public final void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == inventory) {
-            event.setCancelled(true);
-            ClickContext context = new ClickContext(event);
-            if (buttonMap.containsKey(event.getSlot())) {
-                Button button = buttonMap.get(event.getSlot());
-
-                if (!button.canUse(context)) {
-                    return;
+            Button button = buttonMap.get(event.getSlot());
+            if (button != null) {
+                event.setCancelled(true);
+                if (onButtonClick((Player) event.getWhoClicked(), button, event.getClick())) {
+                    populate();
                 }
-
-                switch (event.getClick()) {
-                    case RIGHT -> button.rightClick(context);
-                    case LEFT -> button.leftClick(context);
-                }
-
-                inventory.setItem(event.getSlot(), button.render());
                 return;
             }
-            onClick(context);
+            event.setCancelled(hasAccess(event.getSlot()));
         }
     }
 
