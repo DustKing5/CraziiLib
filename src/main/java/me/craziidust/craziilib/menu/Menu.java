@@ -153,7 +153,7 @@ public class Menu implements Listener, InventoryHolder {
         parent.open(player);
     }
 
-    public boolean onButtonClick(Player player, Button button, ClickType clickType) {
+    public boolean onClick(Player player, Button button, ClickType clickType) {
         return false;
     };
 
@@ -172,14 +172,10 @@ public class Menu implements Listener, InventoryHolder {
     public final void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == inventory) {
             Button button = buttonMap.get(event.getSlot());
-            if (button != null) {
-                event.setCancelled(true);
-                if (onButtonClick((Player) event.getWhoClicked(), button, event.getClick())) {
-                    populate();
-                }
-                return;
+            if (onClick((Player) event.getWhoClicked(), button, event.getClick())) {
+                populate();
             }
-            event.setCancelled(hasAccess(event.getSlot()));
+            event.setCancelled(button != null || hasAccess(event.getSlot()));
         }
     }
 
