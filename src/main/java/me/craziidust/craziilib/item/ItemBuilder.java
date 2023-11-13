@@ -45,7 +45,7 @@ public class ItemBuilder {
         return this;
     }
 
-    public ItemBuilder unBreakable(boolean bool) {
+    public ItemBuilder unbreakable(boolean bool) {
         itemStack.editMeta(itemMeta -> itemMeta.setUnbreakable(bool));
         return this;
     }

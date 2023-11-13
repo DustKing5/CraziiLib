@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.server.PluginDisableEvent;
@@ -133,7 +132,8 @@ public class Menu implements Listener, InventoryHolder {
             player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
         }
     }
-    private final void populate() {
+    
+    private void populate() {
         buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
     }
 
@@ -153,13 +153,14 @@ public class Menu implements Listener, InventoryHolder {
         parent.open(player);
     }
 
-    public boolean onClick(Player player, Button button, ClickType clickType) {
+    /**
+     * Handle inventory click
+     * @param event
+     * @return true, if the inventory changed
+     */
+    public boolean onClick(InventoryClickEvent event) {
         return false;
     };
-
-    public boolean hasAccess(int slot) {
-        return false;
-    }
 
     @EventHandler
     public final void onInventoryClose(InventoryCloseEvent event) {
@@ -171,11 +172,12 @@ public class Menu implements Listener, InventoryHolder {
     @EventHandler
     public final void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == inventory) {
-            Button button = buttonMap.get(event.getSlot());
-            if (onClick((Player) event.getWhoClicked(), button, event.getClick())) {
+            if (onClick(event)) {
                 populate();
             }
-            event.setCancelled(button != null || hasAccess(event.getSlot()));
+            if (buttonMap.containsKey(event.getSlot())) {
+                event.setCancelled(true);
+            }
         }
     }
 

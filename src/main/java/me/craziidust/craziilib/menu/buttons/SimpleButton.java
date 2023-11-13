@@ -20,6 +20,6 @@ public class SimpleButton implements Button {
 
     @Override
     public @NotNull String getId() {
-        return null;
+        return id;
     }
 }
