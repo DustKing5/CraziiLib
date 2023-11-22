@@ -9,6 +9,10 @@ public interface MenuHolder {
 
     void closeMenu();
 
+    default Menu getMenu() {
+        return getMenu(null,null);
+    }
+
     default Menu getMenu(Player player) {
         return getMenu(player, null);
     }

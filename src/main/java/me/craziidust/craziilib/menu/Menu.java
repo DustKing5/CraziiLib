@@ -1,6 +1,5 @@
 package me.craziidust.craziilib.menu;
 
-import me.craziidust.craziilib.menu.buttons.Button;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -12,16 +11,13 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Menu implements Listener, InventoryHolder {
     private final JavaPlugin javaPlugin;
     private final Inventory inventory;
-    private final Map<Integer, Button> buttonMap;
 
     private boolean active = false;
     private Menu parent;
@@ -35,67 +31,58 @@ public class Menu implements Listener, InventoryHolder {
     public Menu(JavaPlugin javaPlugin,MenuType menuType, Component title) {
         this.javaPlugin = javaPlugin;
         this.inventory = menuType.create(this,title);
-        this.buttonMap = new HashMap<>();
     }
 
     /**
-     * Add button to specified slot
-     * @param slot
-     * @param button
+     * Add item to menu
+     * @param itemStack
      */
-    public final void addButton(int slot,Button button) {
-        if (slot < 0) {
-            throw new IllegalArgumentException("Slot can't be lower than 0");
-        }
-        if (slot > inventory.getSize()) {
-            throw new IllegalArgumentException("Slot can't be higher then " + inventory.getSize() * 9);
-        }
-        buttonMap.put(slot,button);
+    public void addItem(ItemStack itemStack) {
+        inventory.addItem(itemStack);
     }
 
     /**
-     * Add button to specified column and row
-     * @param row
-     * @param column
-     * @param button
-     */
-    public final void addButton(int row, int column, Button button) {
-        if (column < 0 || column > 8) {
-            throw new IllegalArgumentException("Column out of bonds: 0-8");
-        }
-        if (row < 0 || row > inventory.getSize() / 9) {
-            throw new IllegalArgumentException("Row out of bonds: 0-" + inventory.getSize() / 9);
-        }
-        addButton((row*9)+column, button);
-    }
-
-    /**
-     * Remove Button from specified slot
+     * Add item to slot
+     * @param itemStack
      * @param slot
      */
-    public final void removeButton(int slot) {
-        if (slot < 0) {
-            throw new IllegalArgumentException("Slot can't be lower than 0");
-        }
-        if (slot > inventory.getSize()) {
-            throw new IllegalArgumentException("Slot can't be higher then " + inventory.getSize() * 9);
-        }
-        buttonMap.remove(slot);
+    public void addItem(ItemStack itemStack, int slot) {
+        inventory.setItem(slot, itemStack);
     }
 
     /**
-     * Remove Button from specified row and column
+     * Add item to menu
+     * @param itemStack
      * @param row
      * @param column
      */
-    public final void removeButton(int row, int column) {
-        if (column < 0 || column > 8) {
-            throw new IllegalArgumentException("Column out of bonds: 0-8");
-        }
-        if (row < 0 || row > inventory.getSize() / 9) {
-            throw new IllegalArgumentException("Row out of bonds: 0-" + inventory.getSize() / 9);
-        }
-        removeButton((row*9)+column);
+    public void addItem(ItemStack itemStack, int row, int column) {
+        addItem(itemStack,(row*9+column));
+    }
+
+    /**
+     * Remove item from menu
+     * @param itemStack
+     */
+    public void removeItem(ItemStack itemStack) {
+        inventory.remove(itemStack);
+    }
+
+    /**
+     * Remove item from slot
+     * @param slot
+     */
+    public void removeItem(int slot) {
+        inventory.clear(slot);
+    }
+
+    /**
+     * Remove item
+     * @param row
+     * @param column
+     */
+    public void removeItem(int row, int column) {
+        removeItem((row*9)+column);
     }
 
     /**
@@ -105,7 +92,6 @@ public class Menu implements Listener, InventoryHolder {
     public final void open(Player player) {
         if (!active) {
             Bukkit.getPluginManager().registerEvents(this, javaPlugin);
-            populate();
             active = true;
         }
         player.openInventory(inventory);
@@ -132,10 +118,6 @@ public class Menu implements Listener, InventoryHolder {
             player.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
         }
     }
-    
-    private void populate() {
-        buttonMap.forEach((integer, button) -> inventory.setItem(integer,button.render()));
-    }
 
     /**
      * Open subMenu
@@ -156,10 +138,9 @@ public class Menu implements Listener, InventoryHolder {
     /**
      * Handle inventory click
      * @param event
-     * @return true, if the inventory changed
      */
-    public boolean onClick(InventoryClickEvent event) {
-        return false;
+    public void onClick(InventoryClickEvent event) {
+
     };
 
     @EventHandler
@@ -172,12 +153,7 @@ public class Menu implements Listener, InventoryHolder {
     @EventHandler
     public final void onInventoryClick(InventoryClickEvent event) {
         if (event.getClickedInventory() == inventory) {
-            if (onClick(event)) {
-                populate();
-            }
-            if (buttonMap.containsKey(event.getSlot())) {
-                event.setCancelled(true);
-            }
+            onClick(event);
         }
     }
 
