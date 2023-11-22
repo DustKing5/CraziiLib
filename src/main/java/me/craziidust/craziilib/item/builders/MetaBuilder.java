@@ -15,10 +15,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public interface MetaBuilder<T extends ItemMeta> extends Consumer<T> {
+public sealed interface MetaBuilder<T extends ItemMeta> extends Consumer<T> permits ArmorBuilder, BannerBuilder, BookBuilder, ColorableBuilder, DamageableBuilder, PotionBuilder {
 
     @NotNull Class<T> getType();
 
+    static ArmorBuilder armor() {
+        return new ArmorBuilder();
+    }
     static ArmorBuilder armor(TrimMaterial material, TrimPattern pattern) {
         return new ArmorBuilder(material, pattern);
     }
@@ -47,8 +50,16 @@ public interface MetaBuilder<T extends ItemMeta> extends Consumer<T> {
         return new BookBuilder();
     }
 
-    static ColorableBuilder colorable(Color color, TrimMaterial trimMaterial, TrimPattern pattern) {
-        return new ColorableBuilder(color, trimMaterial, pattern);
+    static ColorableBuilder colorable(Color color) {
+        return new ColorableBuilder(color);
+    }
+
+    static DamageableBuilder damageable() {
+        return new DamageableBuilder();
+    }
+
+    static DamageableBuilder damageable(int damage) {
+        return new DamageableBuilder(damage);
     }
 
     static PotionBuilder potion(PotionType type) {

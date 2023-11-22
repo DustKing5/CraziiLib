@@ -6,14 +6,29 @@ import org.bukkit.inventory.meta.trim.TrimMaterial;
 import org.bukkit.inventory.meta.trim.TrimPattern;
 import org.jetbrains.annotations.NotNull;
 
-public class ArmorBuilder implements MetaBuilder<ArmorMeta> {
+public final class ArmorBuilder implements MetaBuilder<ArmorMeta> {
 
-    private final TrimMaterial material;
-    private final TrimPattern pattern;
+    private TrimMaterial material;
+    private TrimPattern pattern;
 
-    protected ArmorBuilder(TrimMaterial material, TrimPattern pattern) {
+    ArmorBuilder() {
+        this.material = null;
+        this.pattern = null;
+    }
+
+    ArmorBuilder(TrimMaterial material, TrimPattern pattern) {
         this.material = material;
         this.pattern = pattern;
+    }
+
+    public ArmorBuilder material(TrimMaterial material) {
+        this.material = material;
+        return this;
+    }
+
+    public ArmorBuilder pattern(TrimPattern pattern) {
+        this.pattern = pattern;
+        return this;
     }
 
     @Override

@@ -9,19 +9,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BannerBuilder implements MetaBuilder<BannerMeta> {
+public final class BannerBuilder implements MetaBuilder<BannerMeta> {
 
     private final List<Pattern> patterns;
 
-    protected BannerBuilder() {
+    BannerBuilder() {
         this.patterns = new LinkedList<>();
     }
 
-    protected BannerBuilder(List<Pattern> patterns) {
+    BannerBuilder(List<Pattern> patterns) {
         this.patterns = patterns;
     }
 
-    protected BannerBuilder(DyeColor color, PatternType type) {
+    BannerBuilder(DyeColor color, PatternType type) {
         this.patterns = new LinkedList<>();
         patterns.add(new Pattern(color, type));
     }

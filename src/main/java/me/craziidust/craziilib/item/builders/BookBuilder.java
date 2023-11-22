@@ -1,22 +1,20 @@
 package me.craziidust.craziilib.item.builders;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.inventory.meta.BookMeta;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static org.bukkit.inventory.meta.BookMeta.*;
+import static org.bukkit.inventory.meta.BookMeta.Generation;
 
-public class BookBuilder implements MetaBuilder<BookMeta> {
+public final class BookBuilder implements MetaBuilder<BookMeta> {
 
     private Component author, title;
     private Generation generation;
     private List<Component> pages;
 
-    protected BookBuilder() {
+    BookBuilder() {
     }
 
     public BookBuilder author(Component author) {
@@ -57,6 +55,7 @@ public class BookBuilder implements MetaBuilder<BookMeta> {
     public void accept(BookMeta bookMeta) {
         bookMeta.author(author);
         bookMeta.title(title);
+        bookMeta.setGeneration(generation);
         bookMeta.addPages(pages.toArray(new Component[0]));
     }
 }

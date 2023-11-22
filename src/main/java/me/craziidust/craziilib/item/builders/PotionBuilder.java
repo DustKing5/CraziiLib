@@ -7,22 +7,21 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PotionBuilder implements MetaBuilder<PotionMeta> {
+public final class PotionBuilder implements MetaBuilder<PotionMeta> {
 
     private final PotionType base;
     private Color color;
     private List<PotionEffect> effects;
     private boolean overwrite = true;
 
-    public PotionBuilder(PotionType base) {
+    PotionBuilder(PotionType base) {
         this(base, null);
     }
 
-    public PotionBuilder(PotionType base, Color color) {
+    PotionBuilder(PotionType base, Color color) {
         this.base = base;
         this.color = color;
         this.effects = new LinkedList<>();
@@ -39,7 +38,7 @@ public class PotionBuilder implements MetaBuilder<PotionMeta> {
     }
 
     public PotionBuilder addEffects(PotionEffect ...effects) {
-        return addEffects(Arrays.stream(effects).toList());
+        return addEffects(List.of(effects));
     }
 
     public PotionBuilder addEffect(PotionEffect effect) {
