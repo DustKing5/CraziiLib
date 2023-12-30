@@ -6,6 +6,10 @@ public class Id {
 
     private static final Random RANDOM = new Random();
 
+    private Id() {
+
+    }
+
     public String get() {
         return RANDOM.ints(97,123)
                 .limit(5)
